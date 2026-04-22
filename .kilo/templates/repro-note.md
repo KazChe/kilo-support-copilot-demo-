@@ -1,7 +1,12 @@
-# Repro Note — <bug id / short title>
+# Repro Note: <bug id / short title>
 
-## Reporter
-<who reported it — customer, internal, synthetic>
+## Reported in tickets
+
+- <TICKET-ID> (first report) — <one-line paraphrase>
+- <TICKET-ID> — <one-line paraphrase>
+
+*(This list is append-only. New tickets reporting the same underlying
+bug add a line here instead of creating a new repro note.)*
 
 ## Symptom (as reported)
 <what the user sees, quoted verbatim where possible>
