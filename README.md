@@ -106,7 +106,7 @@ get `customer-workaround-<ticket>.md`).
 - [x] Bug symptom file
 - [x] Artifact templates (repro-note, root-cause, customer-workaround, escalation-ticket, runbook)
 - [x] `.kilo/agents/triager.md` and `.kilo/agents/scribe.md`
-- [ ] End-to-end dry run with the two agents
+- [x] End-to-end dry run with the two agents (all 5 artifacts landed)
 - [ ] Demo recording
 
 ## Follow-ups (not in v1)
