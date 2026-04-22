@@ -96,6 +96,28 @@ fixes.
 - Do **not** overwrite `customer-workaround.md` if one already exists
   for a different ticket. Create a per-ticket file instead.
 
+## File I/O rules (read carefully)
+
+These rules exist because a prior Triager run produced a confident
+summary in chat while the output file silently failed to write. Do not
+let that happen again.
+
+- **Use the right tool for the job.** For creating a new file (e.g.
+  `root-cause.md` on first write), use the **write** tool. For
+  modifying a file that already exists (e.g. updating the runbook after
+  a repeat report), use the **edit** tool. Do not call edit on a path
+  that does not yet exist; it will fail.
+- **Fail loud, never fabricate.** If any tool call returns an error
+  ("file not found", "permission denied", "parent directory missing",
+  "offset must be..."), stop immediately and surface the exact error in
+  your next message. Do **not** retry silently, do **not** summarize as
+  if it had worked, and do **not** claim a file was written when the
+  tool call errored.
+- **Verify after writing.** Before declaring done, list
+  `artifacts/<bug-id>/` (via the list or glob tool) and confirm all
+  four expected files are present. If any are missing, the write
+  failed and you must report that, not declare success.
+
 ## Before declaring done
 
 - Read the customer workaround aloud. Would it sound reasonable to
@@ -105,3 +127,4 @@ fixes.
 - Is the runbook short enough to be scannable?
 - Did you update the repro note's ticket list if this was a repeat
   report? (If not, that was the Triager's job; verify it was done.)
+- Did you verify all four artifacts actually exist on disk?
