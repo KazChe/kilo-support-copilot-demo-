@@ -1,12 +1,66 @@
-# Discoveries
+# Discoveries: Building a Support Copilot with Kilo Code
 
-A running log of nuances, gotchas, and non-obvious facts collected while
-building this demo. Each entry answers two questions: **what did we find?**
-and **why does it matter for someone building a similar demo?**
+> A running log of lessons learned while building a small proof-of-concept
+> where two [Kilo Code](https://kilo.ai/) custom agents (a Triager and a
+> Scribe) collaborate on a single seeded bug in a tiny devtools app, and
+> produce the five artifacts a real support team hands off for every
+> incident: repro note, root cause summary, customer-facing workaround,
+> escalation ticket, and runbook.
 
-The format is deliberately blunt so future readers (including future me) get
-both the conclusion and the reasoning behind it, not just polished marketing
-prose.
+**Project repo:** [github.com/KazChe/kilo-support-copilot-demo-](https://github.com/KazChe/kilo-support-copilot-demo-)
+
+## What this is
+
+A topic-organized log of the specific nuances, gotchas, and non-obvious
+facts collected while building the demo. It is written for anyone
+planning to build a similar thing: someone who read the product page,
+saw that Kilo supports "custom modes" and "permissions" and "MCP", and
+wants to know what that actually means in practice before investing a
+weekend.
+
+Each entry answers two questions: **what did we find?** and **why does
+it matter for someone building a similar demo?**
+
+You will find sections on:
+
+- **Kilo custom agents**: the filename and format Kilo actually uses
+  today (spoiler: not what the older docs suggest), the permission
+  model, and the differences between documented and real frontmatter
+  fields.
+- **Prompts**: failure modes unique to multi-step agent workflows and
+  the prompt wording that mitigates them.
+- **The seeded bug**: why the specific bug we picked is a good
+  first-bug for an agent demo.
+- **Artifacts and their scope**: per-bug vs per-ticket artifacts, and
+  why the distinction matters the moment a second customer files the
+  same ticket.
+- **Agent behavior gotchas**: the ways agents fabricate success,
+  wander off-scope, and adopt confident voice over real work.
+- **Permissions**: the single permission rule that had us chasing
+  phantom bugs for two whole dry-run sessions.
+- **Process**: habits that would have saved hours if picked up earlier.
+
+Each entry follows the same pattern so a reader can jump to whichever
+chunk is relevant: **what we thought → what we found → why it
+matters.**
+
+The format is deliberately blunt, so a future reader (including future
+me) gets both the conclusion and the reasoning behind it, not just
+polished marketing prose.
+
+**If you want the code:** the agents, seeded bug, artifact templates,
+and screenshots are all in
+[the repo](https://github.com/KazChe/kilo-support-copilot-demo-).
+Start with the [README](https://github.com/KazChe/kilo-support-copilot-demo-/blob/main/README.md)
+and the [two agent files](https://github.com/KazChe/kilo-support-copilot-demo-/tree/main/.kilo/agents).
+
+**If you want to see what the agents actually produced without running
+anything:** all five artifacts from our working dry-run are preserved
+at [example-artifacts/](https://github.com/KazChe/kilo-support-copilot-demo-/tree/main/example-artifacts).
+The repro note, root cause, customer workaround, escalation ticket,
+and runbook were all written by the Triager and Scribe on a real
+session, not hand-crafted. Worth skimming to get a feel for the
+quality of the output.
 
 ---
 
@@ -397,6 +451,27 @@ non-zero if the bug does not manifest, which gives us a binary signal.
 ---
 
 *This is a living document. Each meaningful nuance hit while building
-the demo should be added here, keeping the "what we thought / what we
-found / why it matters" pattern so future readers get both the
-conclusion and the reasoning.*
+the demo is added here, keeping the "what we thought / what we found /
+why it matters" pattern so future readers get both the conclusion and
+the reasoning.*
+
+---
+
+## Further reading
+
+- **Project repo:** [github.com/KazChe/kilo-support-copilot-demo-](https://github.com/KazChe/kilo-support-copilot-demo-)
+- **Kilo Code:** [kilo.ai](https://kilo.ai/)
+- **Custom agents docs:** [kilo.ai/docs/customize/custom-modes](https://kilo.ai/docs/customize/custom-modes)
+- **The two agent definitions we wrote:**
+  [triager.md](https://github.com/KazChe/kilo-support-copilot-demo-/blob/main/.kilo/agents/triager.md)
+  and
+  [scribe.md](https://github.com/KazChe/kilo-support-copilot-demo-/blob/main/.kilo/agents/scribe.md)
+- **The seeded bug:**
+  [app/server/src/config.ts](https://github.com/KazChe/kilo-support-copilot-demo-/blob/main/app/server/src/config.ts)
+  (line 5 is the one that bites)
+- **What the agents produced on a real run:**
+  [example-artifacts/](https://github.com/KazChe/kilo-support-copilot-demo-/tree/main/example-artifacts)
+  (all five support artifacts, unedited)
+
+If you build your own version and find a new gotcha, the repo welcomes
+issues and PRs on this file.
