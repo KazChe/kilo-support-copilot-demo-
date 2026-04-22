@@ -5,8 +5,8 @@ workflow: reproduce a seeded bug, diagnose it, and produce the artifacts a
 real support team would hand off (repro note, root-cause summary,
 customer-facing workaround, escalation ticket).
 
-This is **lean v1**: one bug, two Kilo modes, no MCP. Bugs 2 and 3, a Fixer
-mode with a regression test, and an MCP docs-lookup server are planned as
+This is **lean v1**: one bug, two Kilo agents, no MCP. Bugs 2 and 3, a Fixer
+agent with a regression test, and an MCP docs-lookup server are planned as
 follow-ups.
 
 ## Layout
@@ -17,12 +17,12 @@ follow-ups.
 │   ├── server/        Express + TypeScript API with one seeded bug
 │   └── web/           Single static HTML login page (no build step)
 ├── .kilo/
+│   ├── agents/        (coming next) Kilo custom agents: triager.md, scribe.md
 │   ├── bugs/          Symptom descriptions (no cause hints), input for the Triager
 │   └── templates/     Markdown templates for each support artifact
 ├── scripts/
 │   └── repro-01.sh    Deterministic reproduction for bug 01
-├── artifacts/         Where the Triager and Scribe write their output
-└── .kilocodemodes     (coming next) Kilo custom modes: triager, scribe
+└── artifacts/         Where the Triager and Scribe write their output
 ```
 
 ## Running the app manually
@@ -48,15 +48,18 @@ request using the same key, and exits non-zero if the bug doesn't reproduce.
 
 ## The demo workflow
 
-1. **Triager** (read-only) reads `.kilo/bugs/01-auth-config.md`, runs the
-   repro script, traces the cause by reading source, and writes
-   `artifacts/repro-note.md`.
-2. **Scribe** (read + write scoped to `artifacts/`) reads the repro note and
-   the code, then writes `artifacts/root-cause.md`,
-   `artifacts/customer-workaround.md`, and `artifacts/escalation-ticket.md`.
+Both agents are defined as markdown files in `.kilo/agents/`. Each file
+combines a YAML frontmatter block (describing its permissions) with a
+markdown body that serves as its system prompt. This follows Kilo's
+custom-agents format (see [kilo.ai/docs/customize/custom-modes](https://kilo.ai/docs/customize/custom-modes)).
 
-Both modes will be defined in `.kilocodemodes` once we've verified the schema
-against Kilo's source.
+1. **Triager** (read + scoped bash for the repro script, write scoped to
+   `artifacts/`) reads `.kilo/bugs/01-auth-config.md`, runs the repro
+   script, traces the cause by reading source, and writes
+   `artifacts/repro-note.md`.
+2. **Scribe** (read-only + write scoped to `artifacts/`) reads the repro
+   note and the code, then writes `artifacts/root-cause.md`,
+   `artifacts/customer-workaround.md`, and `artifacts/escalation-ticket.md`.
 
 ## Status
 
@@ -65,11 +68,11 @@ against Kilo's source.
 - [x] Repro script
 - [x] Bug symptom file
 - [x] Artifact templates
-- [ ] `.kilocodemodes` (pending schema check)
+- [ ] `.kilo/agents/triager.md` and `.kilo/agents/scribe.md`
 - [ ] Demo recording
 
 ## Follow-ups (not in v1)
 
-- Fixer mode + regression test for bug 01
+- Fixer agent + regression test for bug 01
 - Bug 02 (API/backend race) and Bug 03 (UI stale closure)
 - MCP docs-lookup server used by the Scribe for citations
