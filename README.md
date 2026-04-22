@@ -21,9 +21,10 @@ follow-ups.
 │   ├── bugs/          Symptom descriptions (no cause hints), input for the Triager
 │   └── templates/     Markdown templates for each support artifact (including runbook)
 ├── scripts/
-│   └── repro-01-auth-config.sh    Deterministic reproduction for bug 01
-└── artifacts/         Per-bug subfolders (e.g. artifacts/01-auth-config/) where
-                       the Triager and Scribe write their output
+│   └── repro-01-auth-config.sh   Deterministic reproduction for bug 01
+├── artifacts/         Per-bug subfolders (e.g. artifacts/01-auth-config/) where
+│                      the Triager and Scribe write their output
+└── images/            Screenshots used by this README
 ```
 
 ## Running the app manually
@@ -47,26 +48,55 @@ Then open http://localhost:3000 and try logging in with `my-shell-key`.
 The script starts the server with an API key set in the shell, POSTs a login
 request using the same key, and exits non-zero if the bug doesn't reproduce.
 
-## The demo workflow
+## Running the demo
 
 Both agents are defined as markdown files in `.kilo/agents/`. Each file
 combines a YAML frontmatter block (describing its permissions) with a
 markdown body that serves as its system prompt. This follows Kilo's
 custom-agents format (see [kilo.ai/docs/customize/custom-modes](https://kilo.ai/docs/customize/custom-modes)).
+For v1 the two agents run **separately**: you manually switch from
+Triager to Scribe via the agent picker after the Triager finishes.
 
-1. **Triager** (read + scoped bash for the repro script, write scoped to
-   `artifacts/`) reads `.kilo/bugs/01-auth-config.md`, runs the repro
-   script, traces the cause by reading source, and writes
-   `artifacts/01-auth-config/repro-note.md`.
-2. **Scribe** (read-only + write scoped to `artifacts/`) reads the repro
-   note and the code, then writes four more files into the same folder:
-   `root-cause.md`, `customer-workaround.md`, `escalation-ticket.md`, and
-   `runbook.md`.
+### Step 0: Verify the agents are loaded
 
-Artifacts are organized per-bug (e.g. `artifacts/01-auth-config/`). Most
-artifacts are per-bug and accumulate ticket references across reports;
-`customer-workaround.md` is per-ticket (subsequent customers get
-`customer-workaround-<ticket>.md`).
+Open this repo in VS Code with the Kilo Code extension installed, then
+open the Kilo sidebar. Click the agent picker (bottom-left of the chat
+input). You should see **Triager** and **Scribe** listed alongside the
+built-in agents, with their descriptions visible:
+
+![Triager and Scribe appearing in the Kilo agent picker](images/agents-inpicker.png)
+
+If either agent is missing, check the Kilo Code output panel in VS Code
+(View → Output → "Kilo Code") for frontmatter validation errors.
+
+### Step 1: Run the Triager
+
+Select **Triager** from the picker and prompt it with:
+
+> Triage the bug described in `.kilo/bugs/01-auth-config.md`. Follow
+> your process and write the repro note.
+
+The Triager is permitted to run `./scripts/repro-*.sh`, read the
+codebase, and write into `artifacts/**`. It should produce
+`artifacts/01-auth-config/repro-note.md`.
+
+### Step 2: Run the Scribe
+
+Switch to **Scribe** via the picker and prompt it with:
+
+> Read `artifacts/01-auth-config/repro-note.md` and produce the four
+> support artifacts for bug 01-auth-config.
+
+The Scribe is read-only on source and writes into `artifacts/**`. It
+should produce `root-cause.md`, `customer-workaround.md`,
+`escalation-ticket.md`, and `runbook.md` in the same folder.
+
+### Artifact scope
+
+Artifacts are organized per-bug (e.g. `artifacts/01-auth-config/`).
+Most artifacts are per-bug and accumulate ticket references across
+reports; `customer-workaround.md` is per-ticket (subsequent customers
+get `customer-workaround-<ticket>.md`).
 
 ## Status
 
