@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Devtools Login</title>
+    <style>
+      body {
+        font-family: system-ui, -apple-system, sans-serif;
+        max-width: 420px;
+        margin: 4rem auto;
+        padding: 0 1rem;
+        color: #222;
+      }
+      h1 { font-size: 1.25rem; margin-bottom: 0.25rem; }
+      p.sub { color: #666; margin-top: 0; font-size: 0.9rem; }
+      label { display: block; font-size: 0.875rem; margin-top: 1rem; color: #444; }
+      input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 0.5rem;
+        font-family: ui-monospace, Menlo, monospace;
+        font-size: 0.9rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      button {
+        margin-top: 1rem;
+        padding: 0.5rem 1rem;
+        background: #222;
+        color: white;
+        border: 0;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      button:hover { background: #000; }
+      .msg {
+        margin-top: 1rem;
+        padding: 0.6rem 0.75rem;
+        border-radius: 4px;
+        font-size: 0.9rem;
+      }
+      .ok  { background: #e6f7e6; color: #1a5a1a; }
+      .err { background: #fbeaea; color: #8a1c1c; }
+    </style>
+  </head>
+  <body>
+    <h1>Devtools Login</h1>
+    <p class="sub">Enter your API key to sign in.</p>
+
+    <label>
+      API Key
+      <input id="key" type="password" autocomplete="off" spellcheck="false" />
+    </label>
+    <button id="submit">Log In</button>
+    <div id="msg" class="msg" hidden></div>
+
+    <script>
+      const $ = (id) => document.getElementById(id);
+      $('submit').addEventListener('click', async () => {
+        const key = $('key').value;
+        const msg = $('msg');
+        msg.hidden = false;
+        msg.textContent = 'signing in...';
+        msg.className = 'msg';
+        try {
+          const r = await fetch('/login', {
+            method: 'POST',
+            headers: { Authorization: 'Bearer ' + key },
+          });
+          const data = await r.json().catch(() => ({}));
+          if (r.ok) {
+            msg.textContent = data.message || 'OK';
+            msg.className = 'msg ok';
+          } else {
+            msg.textContent = data.error || ('HTTP ' + r.status);
+            msg.className = 'msg err';
+          }
+        } catch (e) {
+          msg.textContent = String(e);
+          msg.className = 'msg err';
+        }
+      });
+    </script>
+  </body>
+</html>
