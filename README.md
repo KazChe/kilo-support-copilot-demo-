@@ -3,7 +3,7 @@
 A small demo repo that showcases [Kilo Code](https://kilo.ai/) driving a support-engineering
 workflow: reproduce a seeded bug, diagnose it, and produce the artifacts a
 real support team would hand off (repro note, root-cause summary,
-customer-facing workaround, escalation ticket).
+customer-facing workaround, escalation ticket, and runbook).
 
 This is **lean v1**: one bug, two Kilo agents, no MCP. Bugs 2 and 3, a Fixer
 agent with a regression test, and an MCP docs-lookup server are planned as
@@ -17,12 +17,13 @@ follow-ups.
 │   ├── server/        Express + TypeScript API with one seeded bug
 │   └── web/           Single static HTML login page (no build step)
 ├── .kilo/
-│   ├── agents/        (coming next) Kilo custom agents: triager.md, scribe.md
+│   ├── agents/        Kilo custom agents: triager.md, scribe.md
 │   ├── bugs/          Symptom descriptions (no cause hints), input for the Triager
-│   └── templates/     Markdown templates for each support artifact
+│   └── templates/     Markdown templates for each support artifact (including runbook)
 ├── scripts/
 │   └── repro-01.sh    Deterministic reproduction for bug 01
-└── artifacts/         Where the Triager and Scribe write their output
+└── artifacts/         Per-bug subfolders (e.g. artifacts/01-auth-config/) where
+                       the Triager and Scribe write their output
 ```
 
 ## Running the app manually
@@ -56,10 +57,16 @@ custom-agents format (see [kilo.ai/docs/customize/custom-modes](https://kilo.ai/
 1. **Triager** (read + scoped bash for the repro script, write scoped to
    `artifacts/`) reads `.kilo/bugs/01-auth-config.md`, runs the repro
    script, traces the cause by reading source, and writes
-   `artifacts/repro-note.md`.
+   `artifacts/01-auth-config/repro-note.md`.
 2. **Scribe** (read-only + write scoped to `artifacts/`) reads the repro
-   note and the code, then writes `artifacts/root-cause.md`,
-   `artifacts/customer-workaround.md`, and `artifacts/escalation-ticket.md`.
+   note and the code, then writes four more files into the same folder:
+   `root-cause.md`, `customer-workaround.md`, `escalation-ticket.md`, and
+   `runbook.md`.
+
+Artifacts are organized per-bug (e.g. `artifacts/01-auth-config/`). Most
+artifacts are per-bug and accumulate ticket references across reports;
+`customer-workaround.md` is per-ticket (subsequent customers get
+`customer-workaround-<ticket>.md`).
 
 ## Status
 
@@ -67,8 +74,9 @@ custom-agents format (see [kilo.ai/docs/customize/custom-modes](https://kilo.ai/
 - [x] Static login page
 - [x] Repro script
 - [x] Bug symptom file
-- [x] Artifact templates
-- [ ] `.kilo/agents/triager.md` and `.kilo/agents/scribe.md`
+- [x] Artifact templates (repro-note, root-cause, customer-workaround, escalation-ticket, runbook)
+- [x] `.kilo/agents/triager.md` and `.kilo/agents/scribe.md`
+- [ ] End-to-end dry run with the two agents
 - [ ] Demo recording
 
 ## Follow-ups (not in v1)
