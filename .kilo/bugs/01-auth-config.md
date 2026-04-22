@@ -22,7 +22,7 @@ Pretend-customer "Acme Devtools Inc." — support ticket #SUPPORT-4815
 4. Sees **authentication failed**
 
 ## Reproduction
-`scripts/repro-01.sh` reproduces the failure deterministically. It starts the
+`scripts/repro-01-auth-config.sh` reproduces the failure deterministically. It starts the
 server with `API_KEY=my-shell-key` exported in the environment, then POSTs
 `Authorization: Bearer my-shell-key` to `/login`. Expected 200, observed 401.
 

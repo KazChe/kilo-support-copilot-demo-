@@ -21,7 +21,7 @@ follow-ups.
 │   ├── bugs/          Symptom descriptions (no cause hints), input for the Triager
 │   └── templates/     Markdown templates for each support artifact (including runbook)
 ├── scripts/
-│   └── repro-01.sh    Deterministic reproduction for bug 01
+│   └── repro-01-auth-config.sh    Deterministic reproduction for bug 01
 └── artifacts/         Per-bug subfolders (e.g. artifacts/01-auth-config/) where
                        the Triager and Scribe write their output
 ```
@@ -41,7 +41,7 @@ Then open http://localhost:3000 and try logging in with `my-shell-key`.
 ## Reproducing bug 01
 
 ```
-./scripts/repro-01.sh
+./scripts/repro-01-auth-config.sh
 ```
 
 The script starts the server with an API key set in the shell, POSTs a login
