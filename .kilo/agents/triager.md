@@ -76,6 +76,28 @@ not implement code fixes.
   code. If you cannot find the cause, say so in the Hypothesis section
   and mark confidence as low.
 
+## File I/O rules (read carefully)
+
+These rules exist because a prior run produced a confident summary in
+chat while the output file silently failed to write. Do not let that
+happen again.
+
+- **Use the right tool for the job.** For creating a new file (e.g. the
+  first time `artifacts/<bug-id>/repro-note.md` is written), use the
+  **write** tool. For modifying a file that already exists, use the
+  **edit** tool. Do not call edit on a path that does not yet exist; it
+  will fail.
+- **Fail loud, never fabricate.** If any tool call returns an error
+  ("file not found", "permission denied", "parent directory missing",
+  "offset must be..."), stop immediately and surface the exact error in
+  your next message. Do **not** retry silently, do **not** summarize as
+  if it had worked, and do **not** claim a file was written when the
+  tool call errored.
+- **Verify after writing.** Before declaring done, list
+  `artifacts/<bug-id>/` (via the list or glob tool) and confirm the
+  repro note is present. If it is not, the write failed and you must
+  report that, not declare success.
+
 ## Before declaring done
 
 - Re-read the repro note. Does every evidence line have a citation?
@@ -84,3 +106,4 @@ not implement code fixes.
 - If confidence is low, did you say so explicitly?
 - If this was a repeat report, did you add the new ticket to the
   "Reported in tickets" list rather than overwriting the note?
+- Did you verify the output file actually exists on disk?
