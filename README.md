@@ -24,6 +24,8 @@ follow-ups.
 │   └── repro-01-auth-config.sh   Deterministic reproduction for bug 01
 ├── artifacts/         Per-bug subfolders (e.g. artifacts/01-auth-config/) where
 │                      the Triager and Scribe write their output
+├── example-artifacts/ The five artifacts from our actual dry-run, preserved
+│                      so readers can see real output without running the demo
 └── images/            Screenshots used by this README
 ```
 
@@ -80,6 +82,12 @@ The Triager is permitted to run `./scripts/repro-*.sh`, read the
 codebase, and write into `artifacts/**`. It should produce
 `artifacts/01-auth-config/repro-note.md`.
 
+A real session looks like this: the agent executes the repro script,
+captures the 401 response, traces the cause through `server.ts` and
+`config.ts`, and writes the repro note.
+
+![Triager executing the repro script, tracing the code, and writing the repro note](images/triager-ok.png)
+
 ### Step 2: Run the Scribe
 
 Switch to **Scribe** via the picker and prompt it with:
@@ -90,6 +98,19 @@ Switch to **Scribe** via the picker and prompt it with:
 The Scribe is read-only on source and writes into `artifacts/**`. It
 should produce `root-cause.md`, `customer-workaround.md`,
 `escalation-ticket.md`, and `runbook.md` in the same folder.
+
+A real session looks like this: the agent reads the repro note, then
+writes the four artifacts in sequence and links them in the chat
+summary.
+
+![Scribe reading the repro note and writing the four support artifacts](images/scriber-ok.png)
+
+### Seeing the output without running the demo
+
+All five artifacts from the dry-run above are preserved (unedited) in
+[example-artifacts/](example-artifacts/). Skim them to get a feel for
+what the Triager and Scribe actually produce before you invest the
+time to run the agents yourself.
 
 ### Artifact scope
 
